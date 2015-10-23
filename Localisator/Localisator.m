@@ -48,15 +48,15 @@
     {
         NSArray * localizations = [[NSBundle mainBundle] localizations];
         NSMutableArray * languages = [NSMutableArray arrayWithArray:localizations];
-        [languages addObject:DeviceLanguage];
+        [languages addObject:SystemLanguage];
         self._availableLanguages = languages;
         //
-        self._currentLanguage = DeviceLanguage;
+        self._currentLanguage = SystemLanguage;
         //
         _saveInUserDefaults = [[NSUserDefaults standardUserDefaults] objectForKey:LanguageUserDefaultKey] != 0;
         //
         NSString * languageSaved = [[NSUserDefaults standardUserDefaults] objectForKey:LanguageUserDefaultKey];
-        if (languageSaved && ![languageSaved isEqualToString:DeviceLanguage])
+        if (languageSaved && ![languageSaved isEqualToString:SystemLanguage])
         {
             [self loadDictionaryForLanguage:languageSaved];
         }
@@ -113,7 +113,7 @@
     if(newLanguage && ![newLanguage isEqualToString:self._currentLanguage])
     {
         //是否为系统语言
-        if([newLanguage isEqualToString:DeviceLanguage]) res = TRUE;
+        if([newLanguage isEqualToString:SystemLanguage]) res = TRUE;
         else
         {
             BOOL isAvailabel = FALSE;

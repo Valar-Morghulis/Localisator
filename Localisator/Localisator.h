@@ -10,7 +10,7 @@
 #define LOCALIZATION(key) [[Localisator instance] localizedStringForKey:(key)]
 
 extern NSString * LanguageChangedNotification;//通知
-static const NSString * DeviceLanguage = @"DeviceLanguage";//系统语言标识
+static const NSString * SystemLanguage = @"SystemLanguage";//系统语言标识
 
 
 @interface Localisator : NSObject
