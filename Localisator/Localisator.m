@@ -8,17 +8,17 @@
 #import "Localisator.h"
 
 #define LanguageUserDefaultKey @"LanguageUserDefaultKey"
- NSString * LanguageChangedNotification = @"LanguageChangedNotification";
+ NSString * LanguageChangedNotificationKey = @"LanguageChangedNotificationKey";
 
 @interface Localisator()
 {
     NSDictionary * _dic;
 }
 @property (nonatomic,retain) NSDictionary * _dic;
+
 @end
 
 @implementation Localisator
-@synthesize _availableLanguages;
 @synthesize _currentLanguage;
 @synthesize _dic;
 @synthesize _saveInUserDefaults;
@@ -26,7 +26,6 @@
 -(void)dealloc
 {
     self._currentLanguage = 0;
-    self._availableLanguages = 0;
     self._dic = 0;
     [super dealloc];
 }
@@ -46,11 +45,6 @@
 {
     if (self = [super init])
     {
-        NSArray * localizations = [[NSBundle mainBundle] localizations];
-        NSMutableArray * languages = [NSMutableArray arrayWithArray:localizations];
-        [languages addObject:SystemLanguage];
-        self._availableLanguages = languages;
-        //
         self._currentLanguage = SystemLanguage;
         //
         _saveInUserDefaults = [[NSUserDefaults standardUserDefaults] objectForKey:LanguageUserDefaultKey] != 0;
@@ -63,7 +57,6 @@
     }
     return self;
 }
-
 
 -(void)set_saveInUserDefaults:(BOOL)saveInUserDefaults
 {
@@ -101,8 +94,8 @@
     }
     else
     {
-        NSString * res = self._dic[key];
-        if(!res) res = key;
+        res = self._dic[key];
+        if(!res)  res = key;
     }
     return res;
 }
@@ -113,25 +106,17 @@
     if(newLanguage && ![newLanguage isEqualToString:self._currentLanguage])
     {
         //是否为系统语言
-        if([newLanguage isEqualToString:SystemLanguage]) res = TRUE;
-        else
+        if([newLanguage isEqualToString:SystemLanguage])
         {
-            BOOL isAvailabel = FALSE;
-            for(NSString * str in self._availableLanguages)
-            {
-                if([newLanguage isEqualToString:str])
-                {
-                    isAvailabel = TRUE;
-                    break;
-                }
-            }
-            if(isAvailabel)  res = [self loadDictionaryForLanguage:newLanguage];
+            self._currentLanguage = newLanguage;
+            self._dic = 0;//
+            res = TRUE;
         }
+        else res = [self loadDictionaryForLanguage:newLanguage];
     }
     if(res)
     {
-        [[NSNotificationCenter defaultCenter] postNotificationName:LanguageChangedNotification
-                                                            object:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:LanguageChangedNotificationKey object:nil];
         if (self._saveInUserDefaults)
         {
             [[NSUserDefaults standardUserDefaults] setObject:self._currentLanguage forKey:LanguageUserDefaultKey];
